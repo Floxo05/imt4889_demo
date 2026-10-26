@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+{% block title %}All Submissions — Course Portal{% endblock %}
+{% block content %}
+<h1 class="mb-4">All Submissions</h1>
+
+<form method="POST" action="{{ url_for('download_batch') }}" id="batchForm">
+  <div class="d-flex flex-wrap gap-2 mb-3">
+    <button type="submit" class="btn btn-outline-primary touch-btn" id="batchDownloadBtn" disabled>Download Selected (ZIP)</button>
+  </div>
+
+  <div class="table-responsive d-none d-md-block">
+    <table class="table table-hover align-middle">
+      <thead class="table-light">
+        <tr>
+          <th><input type="checkbox" class="form-check-input" id="selectAll"></th>
+          <th>Student</th>
+          <th>File</th>
+          <th>Date</th>
+          <th>Status</th>
+          <th>Peer Reviews</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for sub in submissions %}
+        <tr>
+          <td><input type="checkbox" class="form-check-input row-check" name="submission_ids" value="{{ sub.id }}"></td>
+          <td>{{ sub.student.display_name }}</td>
+          <td>{{ sub.original_filename }}</td>
+          <td>{{ sub.upload_timestamp.strftime('%Y-%m-%d %H:%M') }}</td>
+          <td><span class="badge bg-success">{{ sub.status }}</span></td>
+          <td>{{ sub.peer_reviews | length }}</td>
+          <td><a href="{{ url_for('submission_detail', submission_id=sub.id) }}" class="btn btn-sm btn-primary touch-btn">View</a></td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  <div class="d-md-none">
+    {% for sub in submissions %}
+      <div class="card mb-3 shadow-sm">
+        <div class="card-body">
+          <div class="form-check mb-2">
+            <input class="form-check-input row-check" type="checkbox" name="submission_ids" value="{{ sub.id }}" id="check{{ sub.id }}">
+            <label class="form-check-label fw-bold" for="check{{ sub.id }}">{{ sub.student.display_name }}</label>
+          </div>
+          <p class="card-text mb-1"><strong>File:</strong> {{ sub.original_filename }}</p>
+          <p class="card-text mb-1"><strong>Date:</strong> {{ sub.upload_timestamp.strftime('%Y-%m-%d %H:%M') }}</p>
+          <p class="card-text mb-1"><strong>Status:</strong> <span class="badge bg-success">{{ sub.status }}</span></p>
+          <p class="card-text mb-2"><strong>Reviews:</strong> {{ sub.peer_reviews | length }}</p>
+          <a href="{{ url_for('submission_detail', submission_id=sub.id) }}" class="btn btn-primary w-100 touch-btn">View Details</a>
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+</form>
+{% endblock %}

@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% block title %}Upload Slides — Course Portal{% endblock %}
+{% block content %}
+<h1 class="mb-4">Upload Lecture Slides</h1>
+
+<div class="row justify-content-center">
+  <div class="col-12 col-md-8 col-lg-6">
+    <div class="card shadow-sm">
+      <div class="card-body">
+        <form id="uploadForm" method="POST" action="{{ url_for('upload') }}" enctype="multipart/form-data">
+          <div class="mb-3">
+            <label for="file" class="form-label">Select file (PDF, PPTX, PPT — max 50 MB)</label>
+            <input class="form-control form-control-lg" type="file" id="file" name="file" accept=".pdf,.pptx,.ppt" required>
+            <div class="form-text text-danger d-none" id="fileError"></div>
+          </div>
+
+          <div class="mb-3 d-none" id="progressWrapper">
+            <label class="form-label">Uploading…</label>
+            <div class="progress" style="height: 1.5rem;">
+              <div id="progressBar" class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" style="width: 0%">0%</div>
+            </div>
+            <div class="form-text mt-1" id="progressText"></div>
+          </div>
+
+          <button type="submit" class="btn btn-primary w-100 btn-lg touch-btn" id="submitBtn">Submit</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,61 @@
+# Course Portal
+
+A responsive Flask web application for university courses. Students upload lecture slides and peer reviews; lecturers view, download, and leave feedback on submissions.
+
+## Features
+
+- **Student upload** of PDF, PPTX, and PPT files (up to 50 MB)
+- **Peer review** assignments with deadlines
+- **Lecturer dashboard** with sortable submission list and inline preview
+- **Feedback** system (add, edit, delete)
+- **Individual and batch (ZIP) downloads**
+- **Fully responsive** mobile layout with touch-friendly controls
+- **Upload progress bar** and client-side validation
+
+## Quick Start
+
+### 1. Install dependencies
+
+```bash
+pip install -r requirements.txt
+```
+
+### 2. Run the application
+
+```bash
+python app.py
+```
+
+The server starts on `http://localhost:5000`.
+
+### 3. Log in with a demo account
+
+| Role      | Username   | Password |
+|-----------|------------|----------|
+| Lecturer  | `lecturer` | `demo123` |
+| Student 1 | `student1` | `demo123` |
+| Student 2 | `student2` | `demo123` |
+| Student 3 | `student3` | `demo123` |
+
+Demo data (including a dummy submission and peer assignments) is created automatically on the first run.
+
+## Project Structure
+
+```
+app.py              — Flask application, models, routes, seed data
+config.py           — Configuration settings
+requirements.txt    — Python dependencies
+uploads/            — Uploaded files (created automatically)
+portal.db           — SQLite database (created automatically)
+templates/          — Jinja2 HTML templates
+static/             — CSS and JavaScript assets
+```
+
+## Environment Variables
+
+- `SECRET_KEY` — Flask secret key (default provided for development only; set a strong key in production)
+
+## Notes
+
+- The application uses the **Flask development server**. For production deployment, use a WSGI server such as Gunicorn or uWSGI behind a reverse proxy.
+- Uploaded files are stored in the `uploads/` folder. Ensure the application has write permissions there.

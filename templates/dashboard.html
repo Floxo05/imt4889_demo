@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+{% block title %}Dashboard — Course Portal{% endblock %}
+{% block content %}
+<h1 class="mb-4">My Dashboard</h1>
+
+<section class="mb-5">
+  <h2 class="h4 mb-3">My Submissions</h2>
+  {% if submissions %}
+    <div class="list-group">
+      {% for sub in submissions %}
+        <a href="{{ url_for('submission_detail', submission_id=sub.id) }}" class="list-group-item list-group-item-action d-flex flex-column flex-sm-row justify-content-between align-items-start align-items-sm-center gap-2">
+          <div>
+            <strong>{{ sub.original_filename }}</strong>
+            <span class="badge bg-success ms-2">{{ sub.status }}</span>
+          </div>
+          <small class="text-muted">{{ sub.upload_timestamp.strftime('%Y-%m-%d %H:%M') }}</small>
+        </a>
+      {% endfor %}
+    </div>
+  {% else %}
+    <div class="alert alert-info">You have not uploaded any lecture slides yet.</div>
+  {% endif %}
+  <a href="{{ url_for('upload') }}" class="btn btn-primary mt-3 btn-lg touch-btn">Upload Lecture Slides</a>
+</section>
+
+<section>
+  <h2 class="h4 mb-3">Peer Review Assignments</h2>
+  {% if assignments %}
+    <div class="row g-3">
+      {% for pa in assignments %}
+        {% set review = pa.submission.peer_reviews | selectattr('reviewer_id', 'equalto', current_user.id) | first %}
+        <div class="col-12 col-md-6 col-lg-4">
+          <div class="card h-100 shadow-sm">
+            <div class="card-body">
+              <h5 class="card-title">{{ pa.submission.student.display_name }}</h5>
+              <p class="card-text small text-muted">Submission: {{ pa.submission.original_filename }}</p>
+              <p class="card-text small">Deadline: {{ pa.deadline.strftime('%Y-%m-%d %H:%M') }}</p>
+              {% if review %}
+                <span class="badge bg-info">Review Submitted</span>
+              {% else %}
+                <span class="badge bg-warning text-dark">Pending</span>
+              {% endif %}
+            </div>
+            <div class="card-footer bg-white border-0">
+              <a href="{{ url_for('peer_review', submission_id=pa.submission_id) }}" class="btn btn-outline-primary w-100 touch-btn">
+                {% if review %}View / Update Review{% else %}Upload Peer Review{% endif %}
+              </a>
+            </div>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  {% else %}
+    <div class="alert alert-info">No peer review assignments at this time.</div>
+  {% endif %}
+</section>
+{% endblock %}

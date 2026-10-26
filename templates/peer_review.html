@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+{% block title %}Peer Review — Course Portal{% endblock %}
+{% block content %}
+<h1 class="mb-4">Peer Review</h1>
+
+<div class="row justify-content-center">
+  <div class="col-12 col-md-8 col-lg-6">
+    <div class="card shadow-sm mb-4">
+      <div class="card-body">
+        <h5 class="card-title">Assignment Details</h5>
+        <p class="mb-1"><strong>Student:</strong> {{ submission.student.display_name }}</p>
+        <p class="mb-1"><strong>File:</strong> {{ submission.original_filename }}</p>
+        <p class="mb-1"><strong>Deadline:</strong> {{ assignment.deadline.strftime('%Y-%m-%d %H:%M') }}</p>
+        {% if deadline_passed %}
+          <span class="badge bg-danger">Deadline Passed</span>
+        {% else %}
+          <span class="badge bg-success">Open</span>
+        {% endif %}
+      </div>
+    </div>
+
+    {% if existing %}
+      <div class="alert alert-info">
+        You have already uploaded a review: <strong>{{ existing.original_filename }}</strong>
+        ({{ existing.upload_timestamp.strftime('%Y-%m-%d %H:%M') }})
+      </div>
+    {% endif %}
+
+    <div class="card shadow-sm">
+      <div class="card-body">
+        {% if not deadline_passed %}
+          <form id="uploadForm" method="POST" action="{{ url_for('peer_review', submission_id=submission.id) }}" enctype="multipart/form-data">
+            <div class="mb-3">
+              <label for="file" class="form-label">Select review file (PDF, PPTX, PPT — max 50 MB)</label>
+              <input class="form-control form-control-lg" type="file" id="file" name="file" accept=".pdf,.pptx,.ppt" required>
+              <div class="form-text text-danger d-none" id="fileError"></div>
+            </div>
+
+            <div class="mb-3 d-none" id="progressWrapper">
+              <label class="form-label">Uploading…</label>
+              <div class="progress" style="height: 1.5rem;">
+                <div id="progressBar" class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" style="width: 0%">0%</div>
+              </div>
+              <div class="form-text mt-1" id="progressText"></div>
+            </div>
+
+            <button type="submit" class="btn btn-primary w-100 btn-lg touch-btn" id="submitBtn">
+              {% if existing %}Update Review{% else %}Submit Review{% endif %}
+            </button>
+          </form>
+        {% else %}
+          <div class="alert alert-warning mb-0">The peer review deadline has passed. You can no longer upload or edit your review.</div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

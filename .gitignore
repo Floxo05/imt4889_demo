@@ -1,0 +1,10 @@
+# Runtime data, generated on first start
+portal.db
+uploads/
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+.env

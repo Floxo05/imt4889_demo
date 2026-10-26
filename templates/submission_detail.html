@@ -1,0 +1,100 @@
+{% extends "base.html" %}
+{% block title %}Submission Detail — Course Portal{% endblock %}
+{% block content %}
+<h1 class="mb-4">Submission Detail</h1>
+
+<div class="row g-4">
+  <div class="col-12 col-lg-7">
+    <div class="card shadow-sm">
+      <div class="card-body">
+        <h5 class="card-title">{{ submission.original_filename }}</h5>
+        <p class="card-text text-muted">
+          By {{ submission.student.display_name }} &middot; {{ submission.upload_timestamp.strftime('%Y-%m-%d %H:%M') }}
+        </p>
+        <span class="badge bg-success mb-3">{{ submission.status }}</span>
+
+        <div class="mb-3">
+          {% if submission.original_filename.lower().endswith('.pdf') %}
+            <iframe src="{{ url_for('download', doc_type='submission', doc_id=submission.id) }}" class="doc-preview"></iframe>
+          {% else %}
+            <div class="alert alert-secondary">Preview not available for PowerPoint files. Please download to view.</div>
+          {% endif %}
+        </div>
+
+        <a href="{{ url_for('download', doc_type='submission', doc_id=submission.id) }}" class="btn btn-primary touch-btn">
+          Download Slides
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-12 col-lg-5">
+    <div class="card shadow-sm mb-4">
+      <div class="card-header bg-white">
+        <h5 class="mb-0">Peer Reviews</h5>
+      </div>
+      <div class="card-body">
+        {% if reviews %}
+          <ul class="list-group list-group-flush">
+            {% for review in reviews %}
+              <li class="list-group-item d-flex flex-column flex-sm-row justify-content-between align-items-start align-items-sm-center gap-2">
+                <div>
+                  <strong>{{ review.reviewer.display_name }}</strong>
+                  <small class="text-muted d-block">{{ review.original_filename }}</small>
+                </div>
+                <a href="{{ url_for('download', doc_type='review', doc_id=review.id) }}" class="btn btn-sm btn-outline-primary touch-btn">Download</a>
+              </li>
+            {% endfor %}
+          </ul>
+        {% else %}
+          <p class="text-muted mb-0">No peer reviews yet.</p>
+        {% endif %}
+      </div>
+    </div>
+
+    <div class="card shadow-sm">
+      <div class="card-header bg-white">
+        <h5 class="mb-0">Lecturer Feedback</h5>
+      </div>
+      <div class="card-body">
+        {% if feedback_list %}
+          {% for fb in feedback_list %}
+            <div class="mb-3 pb-3 border-bottom">
+              <p class="mb-1">{{ fb.content }}</p>
+              <small class="text-muted">
+                {{ fb.lecturer.display_name }} &middot; {{ fb.updated_at.strftime('%Y-%m-%d %H:%M') }}
+                {% if fb.created_at != fb.updated_at %}(edited){% endif %}
+              </small>
+              {% if current_user.role == 'lecturer' and fb.lecturer_id == current_user.id %}
+                <div class="mt-2 d-flex gap-2">
+                  <button class="btn btn-sm btn-outline-secondary touch-btn" onclick="toggleEdit({{ fb.id }})">Edit</button>
+                  <form method="POST" action="{{ url_for('delete_feedback', feedback_id=fb.id) }}" class="d-inline" onsubmit="return confirm('Delete this feedback?')">
+                    <button type="submit" class="btn btn-sm btn-outline-danger touch-btn">Delete</button>
+                  </form>
+                </div>
+                <form method="POST" action="{{ url_for('edit_feedback', feedback_id=fb.id) }}" class="mt-2 d-none" id="editForm{{ fb.id }}">
+                  <textarea name="content" class="form-control mb-2" rows="3" required>{{ fb.content }}</textarea>
+                  <button type="submit" class="btn btn-sm btn-primary touch-btn">Save</button>
+                </form>
+              {% endif %}
+            </div>
+          {% endfor %}
+        {% else %}
+          <p class="text-muted mb-0">No feedback yet.</p>
+        {% endif %}
+
+        {% if current_user.role == 'lecturer' %}
+          <hr>
+          <form method="POST" action="{{ url_for('add_feedback', submission_id=submission.id) }}">
+            {{ feedback_form.hidden_tag() }}
+            <div class="mb-2">
+              {{ feedback_form.content(class="form-control", rows="4", placeholder="Write your feedback here…") }}
+            </div>
+            <button type="submit" class="btn btn-primary w-100 touch-btn">Save Feedback</button>
+          </form>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
