@@ -1,0 +1,15 @@
+services:
+  app:
+    build: .
+    restart: unless-stopped
+    env_file: 
+      - .env
+    volumes:
+      - demo_data:/app/uploads
+    ports:
+      - 5000:5000
+
+volumes:
+  demo_data: {}
+
+
