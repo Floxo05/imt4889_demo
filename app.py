@@ -6,7 +6,7 @@ from io import BytesIO
 
 from flask import (
     Flask, render_template, request, redirect, url_for, flash,
-    send_from_directory, abort, jsonify
+    send_from_directory, abort, jsonify, send_file
 )
 from flask_login import LoginManager, login_user, logout_user, login_required, current_user
 from flask_sqlalchemy import SQLAlchemy
@@ -227,7 +227,7 @@ def peer_review(submission_id):
         abort(403)
     assignment = PeerAssignment.query.filter_by(reviewer_id=current_user.id, submission_id=submission_id).first_or_404()
     existing = PeerReview.query.filter_by(reviewer_id=current_user.id, submission_id=submission_id).first()
-    deadline_passed = datetime.now(timezone.utc) > assignment.deadline
+    deadline_passed = datetime.now(timezone.utc).replace(tzinfo=None) > assignment.deadline
 
     if request.method == 'POST':
         if deadline_passed:
@@ -391,11 +391,11 @@ def download_batch():
                 zf.write(file_path, arcname=sub.original_filename)
     memory_file.seek(0)
     timestamp = datetime.now(timezone.utc).strftime('%Y%m%d_%H%M%S')
-    return send_from_directory(
-        directory='',
-        path='',
+    return send_file(
+        memory_file,
         as_attachment=True,
-        download_name=f'submissions_{timestamp}.zip'
+        download_name=f'submissions_{timestamp}.zip',
+        mimetype='application/zip'
     )
 
 
