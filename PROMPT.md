@@ -1,5 +1,22 @@
 # Prompt given to the agent
 
+## Where the user stories come from
+
+The 7 user stories were **not written by hand**. They are the unedited answer of Kimi K2.6 (chat, 23 Oct 2026) to the requirements prompt of the lecture, with three extra wishes added by the lecturer:
+
+```text
+We are building a small web portal for our university course. Students upload their lecture slides and their peer reviews, and the lecturer can view and download them.
+Also:
+- The lecturer can leave feedback on each submission
+- It works on a phone
+- Uploads are done in under 10 seconds
+Write the user stories with acceptance criteria.
+```
+
+The extra wishes became US-5 (feedback), US-6 (phone) and US-7 (speed). Everything else, including every acceptance criterion, was decided by the AI.
+
+## The prompt for the agent
+
 Sent once, in an empty folder. The agent asked no questions.
 
 ```text
