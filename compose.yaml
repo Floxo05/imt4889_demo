@@ -6,10 +6,12 @@ services:
       - .env
     volumes:
       - demo_data:/app/uploads
+      - demo_db:/app/data
     ports:
       - 5000:5000
 
 volumes:
   demo_data: {}
+  demo_db: {}
 
 
